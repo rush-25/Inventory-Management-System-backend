@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MiniInventory.Domain\MiniInventory.Domain.csproj" />
+    <ProjectReference Include="..\MiniInventory.Shared\MiniInventory.Shared.csproj" />
+  </ItemGroup>
+</Project>
