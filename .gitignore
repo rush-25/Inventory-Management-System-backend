@@ -1,0 +1,27 @@
+## .NET / C#
+bin/
+obj/
+*.user
+*.suo
+.vs/
+*.userprefs
+*.usertasks
+
+## EF Core migrations snapshots & temp files
+*.db-shm
+*.db-wal
+
+## ASP.NET Core
+appsettings.*.json
+!appsettings.json
+!appsettings.Development.json
+
+## Rider / JetBrains
+.idea/
+*.sln.iml
+
+## Visual Studio Code
+.vscode/
+
+## Build output
+publish/
