@@ -35,27 +35,37 @@ git clone https://github.com/rush-25/Inventory-Management-System-backend.git
 cd Inventory-Management-System-backend
 ```
 
-### 2. Configure the connection string
-Edit `MiniInventory.API/appsettings.json`:
+### 2. Configure Database & Connection String
+Ensure you have **Microsoft SQL Server** installed and running on your machine.
+Edit `MiniInventory.API/appsettings.json` to match your SQL Server instance:
 
 ```json
 {
   "ConnectionStrings": {
-    "DefaultConnection": "Server=YOUR_SERVER;Database=MiniInventoryDB;Trusted_Connection=True;TrustServerCertificate=True;"
+    "DefaultConnection": "Server=.;Database=MiniInventoryDB;Trusted_Connection=True;TrustServerCertificate=True;"
   }
 }
 ```
 
-> **Windows Auth (Trusted Connection):** Use `Server=.` for the default local SQL Server instance.  
-> **SQL Auth:** Use `Server=.;Database=MiniInventoryDB;User Id=sa;Password=YourPassword;TrustServerCertificate=True;`
+> **Default Instance:** Use `Server=.` if you installed the default instance of SQL Server.  
+> **SQL Express:** Use `Server=.\SQLEXPRESS` if you installed SQL Server Express.  
+> **Docker:** Use `Server=localhost,1433;User Id=sa;Password=YourPassword;` if running SQL Server via Docker.
 
 ### 3. Run the Backend (API)
 
 **Using .NET CLI:**
-```bash
+Open a terminal and navigate to the API project folder:
+```powershell
 cd MiniInventory.API
+```
+Then start the application:
+```powershell
 dotnet run
 ```
+> **Note:** If you get an error that `dotnet` is not recognized, make sure you have the .NET 8 SDK installed. If you just installed it, restart your terminal. You can also run it via its absolute path:
+> ```powershell
+> & "C:\Program Files\dotnet\dotnet.exe" run
+> ```
 
 **Using Visual Studio:**
 1. Open `MiniInventorySystem.sln` in Visual Studio 2022.
