@@ -52,6 +52,8 @@ public class AppDbContext : DbContext
             entity.Property(e => e.ItemCode).IsRequired().HasMaxLength(100);
             entity.Property(e => e.Barcode).HasMaxLength(100);
             entity.Property(e => e.ItemName).IsRequired().HasMaxLength(300);
+            entity.Property(e => e.Brand).HasMaxLength(100);
+            entity.Property(e => e.ImageUrl).HasMaxLength(1000);
             entity.Property(e => e.CostPrice).HasColumnType("decimal(18,2)");
             entity.Property(e => e.SellingPrice).HasColumnType("decimal(18,2)");
             entity.Property(e => e.IsActive).HasDefaultValue(true);
