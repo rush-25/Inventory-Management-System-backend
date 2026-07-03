@@ -50,6 +50,8 @@ public class ItemService : IItemService
             ItemCode = dto.ItemCode.Trim(),
             Barcode = dto.Barcode?.Trim(),
             ItemName = dto.ItemName.Trim(),
+            Brand = dto.Brand?.Trim(),
+            ImageUrl = dto.ImageUrl?.Trim(),
             CategoryId = dto.CategoryId,
             SupplierId = dto.SupplierId,
             CostPrice = dto.CostPrice,
@@ -73,6 +75,8 @@ public class ItemService : IItemService
         existing.ItemCode = dto.ItemCode.Trim();
         existing.Barcode = dto.Barcode?.Trim();
         existing.ItemName = dto.ItemName.Trim();
+        existing.Brand = dto.Brand?.Trim();
+        existing.ImageUrl = dto.ImageUrl?.Trim();
         existing.CategoryId = dto.CategoryId;
         existing.SupplierId = dto.SupplierId;
         existing.CostPrice = dto.CostPrice;
@@ -115,6 +119,8 @@ public class ItemService : IItemService
         ItemCode = i.ItemCode,
         Barcode = i.Barcode,
         ItemName = i.ItemName,
+        Brand = i.Brand,
+        ImageUrl = i.ImageUrl,
         CategoryId = i.CategoryId,
         CategoryName = i.Category?.CategoryName,
         SupplierId = i.SupplierId,
