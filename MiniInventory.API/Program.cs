@@ -15,6 +15,7 @@ builder.Services.AddControllers()
     });
 
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddHealthChecks();
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
@@ -33,7 +34,9 @@ builder.Services.AddSwaggerGen(options =>
 // ─── Infrastructure + Application layer DI ───────────────────────────────────
 builder.Services.AddInfrastructure(builder.Configuration);
 
-// ─── CORS – allow the React Vite dev server ───────────────────────────────────
+var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>() ?? Array.Empty<string>();
+
+// ─── CORS – allow the frontend ───────────────────────────────────
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("ReactFrontend", policy =>
@@ -43,8 +46,10 @@ builder.Services.AddCors(options =>
                 "http://localhost:3000",   // CRA default
                 "http://localhost:4173"    // Vite preview
               )
+              .SetIsOriginAllowed(origin => true) // Allow any origin for development purposes
               .AllowAnyHeader()
-              .AllowAnyMethod();
+              .AllowAnyMethod()
+              .AllowCredentials();
     });
 });
 
@@ -71,6 +76,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseCors("ReactFrontend");
 app.UseAuthorization();
+app.MapHealthChecks("/health");
 app.MapControllers();
 
 app.Run();
