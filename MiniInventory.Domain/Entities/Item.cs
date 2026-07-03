@@ -6,6 +6,8 @@ public class Item
     public string ItemCode { get; set; } = string.Empty;
     public string? Barcode { get; set; }
     public string ItemName { get; set; } = string.Empty;
+    public string? Brand { get; set; }
+    public string? ImageUrl { get; set; }
     public int CategoryId { get; set; }
     public int SupplierId { get; set; }
     public decimal CostPrice { get; set; }
