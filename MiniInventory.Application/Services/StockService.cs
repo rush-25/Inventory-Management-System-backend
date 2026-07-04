@@ -192,4 +192,40 @@ public class StockService : IStockService
         if (currentBalance <= reorderLevel) return "Low Stock";
         return "Good Stock";
     }
+
+    public async Task<ApiResponse<List<StockInDto>>> GetStockInHistoryAsync()
+    {
+        var records = await _stockInRepository.GetAllAsync();
+        var dtos = records.Select(s => new StockInDto
+        {
+            StockInId = s.StockInId,
+            ItemId = s.ItemId,
+            ItemName = s.Item?.ItemName,
+            SupplierId = s.SupplierId,
+            SupplierName = s.Supplier?.SupplierName,
+            Quantity = s.Quantity,
+            CostPrice = s.CostPrice,
+            StockInDate = s.StockInDate,
+            CreatedDate = s.CreatedDate
+        }).ToList();
+
+        return ApiResponse<List<StockInDto>>.SuccessResponse(dtos);
+    }
+
+    public async Task<ApiResponse<List<StockOutDto>>> GetStockOutHistoryAsync()
+    {
+        var records = await _stockOutRepository.GetAllAsync();
+        var dtos = records.Select(s => new StockOutDto
+        {
+            StockOutId = s.StockOutId,
+            ItemId = s.ItemId,
+            ItemName = s.Item?.ItemName,
+            Quantity = s.Quantity,
+            Reason = s.Reason,
+            StockOutDate = s.StockOutDate,
+            CreatedDate = s.CreatedDate
+        }).ToList();
+
+        return ApiResponse<List<StockOutDto>>.SuccessResponse(dtos);
+    }
 }

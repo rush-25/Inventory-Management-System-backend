@@ -11,4 +11,6 @@ public interface IStockService
     Task<ApiResponse<List<StockBalanceDto>>> GetStockBalanceAsync();
     Task<ApiResponse<List<StockBalanceDto>>> GetLowStockItemsAsync();
     Task<ApiResponse<DashboardStatsDto>> GetDashboardStatsAsync();
+    Task<ApiResponse<List<StockInDto>>> GetStockInHistoryAsync();
+    Task<ApiResponse<List<StockOutDto>>> GetStockOutHistoryAsync();
 }

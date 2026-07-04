@@ -47,4 +47,20 @@ public class StockController : ControllerBase
         var result = await _stockService.GetLowStockItemsAsync();
         return Ok(result);
     }
+
+    /// <summary>Get full stock in transaction history.</summary>
+    [HttpGet("in/history")]
+    public async Task<IActionResult> GetStockInHistory()
+    {
+        var result = await _stockService.GetStockInHistoryAsync();
+        return Ok(result);
+    }
+
+    /// <summary>Get full stock out transaction history.</summary>
+    [HttpGet("out/history")]
+    public async Task<IActionResult> GetStockOutHistory()
+    {
+        var result = await _stockService.GetStockOutHistoryAsync();
+        return Ok(result);
+    }
 }
