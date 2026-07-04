@@ -59,6 +59,12 @@ npm run dev
 
 ---
 
+## 🔗 Repository Links
+- **Frontend Repository**: [https://github.com/rush-25/Inventory-Management-System-Frontend](https://github.com/rush-25/Inventory-Management-System-Frontend)
+- **Backend Repository**: [https://github.com/rush-25/Inventory-Management-System-backend](https://github.com/rush-25/Inventory-Management-System-backend)
+
+---
+
 ## 📚 Documentation
 For more detailed information about the system internals, please refer to the accompanying documentation files:
 - `API_ENDPOINTS.md`: A complete list of all RESTful API endpoints and response formats.
