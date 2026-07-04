@@ -1,178 +1,65 @@
-# Mini Inventory Management System – Backend
+# V2 Phone Arcade - Inventory Management System
 
-> **ASP.NET Core 8 Web API** | Clean Architecture | Repository Pattern  
-> Ceylon Innovation Services (PVT) LTD – Intern Challenge 01
-
----
-
-## Solution Structure
-
-```
-MiniInventorySystem.sln
-├── MiniInventory.API              ← Controllers + Program.cs (ASP.NET Core Web API)
-├── MiniInventory.Application      ← DTOs, Interfaces, Services, Validation
-├── MiniInventory.Domain           ← Domain Entities only (no dependencies)
-├── MiniInventory.Infrastructure   ← EF Core DbContext, Repositories, DI Setup
-└── MiniInventory.Shared           ← ApiResponse<T> wrapper
-```
+A comprehensive, full-stack Inventory Management System built to handle products, suppliers, categories, and granular stock movements efficiently.
 
 ---
 
-## Prerequisites
-
-| Requirement | Version |
-|-------------|---------|
-| .NET SDK    | 8.0+    |
-| SQL Server  | 2019+   |
+## 🌟 Features
+- **Real-Time Dashboard**: View key metrics, low stock alerts, and recent transactions at a glance.
+- **Product & Category Management**: Comprehensive cataloging with custom pricing, descriptions, and barcode support.
+- **Supplier Tracking**: Manage vendors and their associated supplies.
+- **Stock Movements**: Granular tracking for **Stock In** (receivables) and **Stock Out** (sales, damages, internal use).
+- **Responsive UI**: A modern, clean theme built with React & Tailwind CSS.
+- **Secure Backend**: A robust RESTful API built on ASP.NET Core 8 following Clean Architecture principles.
 
 ---
 
-## Quick Start
+## 🏗️ Architecture Stack
 
-### 1. Clone the repository
+### Frontend
+- **Framework**: React 18 & Vite
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS 4
+- **State Management**: React Context API & React Query
+- **Authentication**: Route guarding via `sessionStorage`
+
+### Backend
+- **Framework**: ASP.NET Core 8 Web API
+- **Architecture**: Clean Architecture & Repository Pattern
+- **Database**: Microsoft SQL Server (via Entity Framework Core)
+
+---
+
+## 🚀 Getting Started
+
+### 1. Database Setup
+Ensure Microsoft SQL Server is installed and running on your machine.
+The connection string is configured in the backend's `appsettings.json`.
+
+### 2. Run the Backend
+Navigate to the backend directory and start the API:
 ```bash
-git clone https://github.com/rush-25/Inventory-Management-System-backend.git
-cd Inventory-Management-System-backend
-```
-
-### 2. Configure Database & Connection String
-Ensure you have **Microsoft SQL Server** installed and running on your machine.
-Edit `MiniInventory.API/appsettings.json` to match your SQL Server instance:
-
-```json
-{
-  "ConnectionStrings": {
-    "DefaultConnection": "Server=.;Database=MiniInventoryDB;Trusted_Connection=True;TrustServerCertificate=True;"
-  }
-}
-```
-
-> **Default Instance:** Use `Server=.` if you installed the default instance of SQL Server.  
-> **SQL Express:** Use `Server=.\SQLEXPRESS` if you installed SQL Server Express.  
-> **Docker:** Use `Server=localhost,1433;User Id=sa;Password=YourPassword;` if running SQL Server via Docker.
-
-### 3. Run the Backend (API)
-
-**Using .NET CLI:**
-Open a terminal and navigate to the API project folder:
-```powershell
-cd MiniInventory.API
-```
-Then start the application:
-```powershell
+cd Inventory-Management-System-backend/MiniInventory.API
 dotnet run
 ```
-> **Note:** If you get an error that `dotnet` is not recognized, make sure you have the .NET 8 SDK installed. If you just installed it, restart your terminal. You can also run it via its absolute path:
-> ```powershell
-> & "C:\Program Files\dotnet\dotnet.exe" run
-> ```
+*Note: The backend will automatically apply EF Core database migrations on startup and serve the Swagger UI at `http://localhost:<PORT>/swagger`.*
 
-**Using Visual Studio:**
-1. Open `MiniInventorySystem.sln` in Visual Studio 2022.
-2. Ensure `MiniInventory.API` is set as the Startup Project (right-click on the project -> Set as Startup Project).
-3. Press `F5` or click the "Start" button to run with debugging.
-
-The backend will:
-- **Automatically apply EF Core migrations** on first startup (creates the database and tables)
-- Serve the Swagger UI automatically at `http://localhost:<PORT>/swagger`
-
-> Alternatively, you can run the SQL script manually if you prefer not to use EF Core Migrations:  
-> `Database/schema.sql` → open in SSMS and execute
-
----
-
-## API Endpoints
-
-### Category (`/api/category`)
-| Method | Route | Description |
-|--------|-------|-------------|
-| `GET` | `/api/category` | List all categories |
-| `GET` | `/api/category/{id}` | Get category by ID |
-| `GET` | `/api/category/search?keyword=` | Search categories |
-| `POST` | `/api/category` | Create category |
-| `PUT` | `/api/category/{id}` | Update category |
-| `DELETE` | `/api/category/{id}` | Delete category |
-
-### Supplier (`/api/supplier`)
-| Method | Route | Description |
-|--------|-------|-------------|
-| `GET` | `/api/supplier` | List all suppliers |
-| `GET` | `/api/supplier/{id}` | Get supplier by ID |
-| `POST` | `/api/supplier` | Create supplier |
-| `PUT` | `/api/supplier/{id}` | Update supplier |
-| `DELETE` | `/api/supplier/{id}` | Delete supplier |
-
-### Item (`/api/item`)
-| Method | Route | Description |
-|--------|-------|-------------|
-| `GET` | `/api/item` | List all items |
-| `GET` | `/api/item/{id}` | Get item by ID |
-| `GET` | `/api/item/search?keyword=phone` | Search by name/code/barcode |
-| `POST` | `/api/item` | Create item |
-| `PUT` | `/api/item/{id}` | Update item |
-| `DELETE` | `/api/item/{id}` | Delete item |
-
-### Stock (`/api/stock`)
-| Method | Route | Description |
-|--------|-------|-------------|
-| `POST` | `/api/stock/in` | Record stock in |
-| `POST` | `/api/stock/out` | Record stock out |
-| `GET` | `/api/stock/balance` | Full stock balance report |
-| `GET` | `/api/stock/low-stock` | Low stock / out of stock items |
-
-### Dashboard (`/api/dashboard`)
-| Method | Route | Description |
-|--------|-------|-------------|
-| `GET` | `/api/dashboard/stats` | Summary stats for dashboard |
-
----
-
-## Response Format
-
-All endpoints return `ApiResponse<T>`:
-
-```json
-{
-  "success": true,
-  "message": "Operation completed successfully.",
-  "data": { ... },
-  "errors": null
-}
-```
-
----
-
-## Stock Out Reason Values
-
-Valid values for the `reason` field in a Stock Out request:
-- `Sale`
-- `Damage`
-- `Internal Use`
-- `Return`
-
----
-
-## Architecture Notes
-
-- **No business logic in controllers** – controllers only call service methods
-- **No raw SQL in repositories** – EF Core LINQ used throughout
-- **DTOs** used for all API input/output (entities never returned directly)
-- **Dependency Injection** wired via `InfrastructureServiceExtensions.AddInfrastructure()`
-- **async/await** used throughout all layers
-- **CORS** configured for `http://localhost:5173` (Vite), `http://localhost:3000` (CRA)
-
----
-
-## EF Core Migrations (manual)
-
+### 3. Run the Frontend
+Open a new terminal, navigate to the frontend directory, install dependencies, and start the Vite dev server:
 ```bash
-# From solution root
-dotnet ef migrations add InitialCreate --project MiniInventory.Infrastructure --startup-project MiniInventory.API
-dotnet ef database update --project MiniInventory.Infrastructure --startup-project MiniInventory.API
+cd Inventory Management System Frontend/Inventory-Management-System-Frontend
+npm install
+npm run dev
 ```
+*Access the web application at `http://localhost:5173`.*
+
+**Default Admin Credentials:**
+- **Username:** `admin`
+- **Password:** `abc123`
 
 ---
 
-## Frontend
-
-React frontend: https://github.com/rush-25/Inventory-Management-System-Frontend
+## 📚 Documentation
+For more detailed information about the system internals, please refer to the accompanying documentation files:
+- `API_ENDPOINTS.md`: A complete list of all RESTful API endpoints and response formats.
+- `TECHNICAL_EXPLANATION.md`: A deep dive into the system architecture, design patterns, and state management.
