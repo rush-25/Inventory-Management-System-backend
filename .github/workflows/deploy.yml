@@ -10,24 +10,24 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
-    
+
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: '8.0.x'
-    
+
     - name: Restore dependencies
-      run: dotnet restore MiniInventory.API/MiniInventory.API/MiniInventory.API.csproj
-    
+      run: dotnet restore MiniInventorySystem.sln
+
     - name: Build
-      run: dotnet build MiniInventory.API/MiniInventory.API/MiniInventory.API.csproj --configuration Release --no-restore
-    
+      run: dotnet build MiniInventorySystem.sln --configuration Release --no-restore
+
     - name: Publish
-      run: dotnet publish MiniInventory.API/MiniInventory.API/MiniInventory.API.csproj -c Release -o publish --no-restore
-    
+      run: dotnet publish MiniInventory.API/MiniInventory.API.csproj -c Release -o publish --no-restore
+
     - name: Create ZIP
       run: cd publish && zip -r ../deploy.zip . && cd ..
-    
+
     - name: Deploy to Elastic Beanstalk
       uses: einaregilsson/beanstalk-deploy@v21
       with:
