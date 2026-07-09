@@ -1,0 +1,41 @@
+name: Deploy to AWS Elastic Beanstalk
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x'
+    
+    - name: Restore dependencies
+      run: dotnet restore MiniInventory.API/MiniInventory.API/MiniInventory.API.csproj
+    
+    - name: Build
+      run: dotnet build MiniInventory.API/MiniInventory.API/MiniInventory.API.csproj --configuration Release --no-restore
+    
+    - name: Publish
+      run: dotnet publish MiniInventory.API/MiniInventory.API/MiniInventory.API.csproj -c Release -o publish --no-restore
+    
+    - name: Create ZIP
+      run: cd publish && zip -r ../deploy.zip . && cd ..
+    
+    - name: Deploy to Elastic Beanstalk
+      uses: einaregilsson/beanstalk-deploy@v21
+      with:
+        aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
+        aws_secret_key: ${{ secrets.AWS_SECRET_KEY }}
+        application_name: grocery-inventory-api
+        environment_name: Grocery-inventory-api-env
+        version_label: v-${{ github.run_number }}
+        region: eu-north-1
+        deployment_package: deploy.zip
+        wait_for_deployment: true
