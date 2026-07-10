@@ -35,8 +35,8 @@ jobs:
       with:
         aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
         aws_secret_key: ${{ secrets.AWS_SECRET_KEY }}
-        application_name: grocery-inventory-api
-        environment_name: Grocery-inventory-api-env
+        application_name: Inventory-Management-System-backend
+        environment_name: Inventory-Management-System-back-env
         version_label: v-${{ github.run_number }}-${{ github.run_attempt }}
         region: eu-north-1
         deployment_package: deploy.zip
