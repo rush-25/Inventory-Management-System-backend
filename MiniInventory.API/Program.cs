@@ -34,19 +34,15 @@ builder.Services.AddSwaggerGen(options =>
 // ─── Infrastructure + Application layer DI ───────────────────────────────────
 builder.Services.AddInfrastructure(builder.Configuration);
 
-var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>() ?? Array.Empty<string>();
+var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>()
+    ?? new[] { "http://localhost:5173", "http://localhost:3000", "http://localhost:4173" };
 
 // ─── CORS – allow the frontend ───────────────────────────────────
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("ReactFrontend", policy =>
     {
-        policy.WithOrigins(
-                "http://localhost:5173",   // Vite dev server default
-                "http://localhost:3000",   // CRA default
-                "http://localhost:4173"    // Vite preview
-              )
-              .SetIsOriginAllowed(origin => true) // Allow any origin for development purposes
+        policy.WithOrigins(allowedOrigins)
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
