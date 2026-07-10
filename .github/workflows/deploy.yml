@@ -28,7 +28,7 @@ jobs:
       run: dotnet publish MiniInventory.API/MiniInventory.API.csproj -c Release -o publish --no-restore
 
     - name: Create ZIP
-      run: cd publish && zip -r ../deploy.zip . && cd ..
+      run: cp -r .ebextensions publish/ && cd publish && zip -r ../deploy.zip . && cd ..
 
     - name: Deploy to Elastic Beanstalk
       uses: einaregilsson/beanstalk-deploy@v21
