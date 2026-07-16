@@ -3,6 +3,7 @@ using MiniInventory.Application.Interfaces.Repositories;
 using MiniInventory.Application.Interfaces.Services;
 using MiniInventory.Domain.Entities;
 using MiniInventory.Shared.CommonResponse;
+using Microsoft.EntityFrameworkCore;
 
 namespace MiniInventory.Application.Services;
 
@@ -35,6 +36,10 @@ public class SupplierService : ISupplierService
         if (string.IsNullOrWhiteSpace(dto.SupplierName))
             return ApiResponse<SupplierDto>.FailureResponse("Supplier name is required.");
 
+        var existingName = await _supplierRepository.GetByNameAsync(dto.SupplierName.Trim());
+        if (existingName is not null)
+            return ApiResponse<SupplierDto>.FailureResponse($"Supplier with name '{dto.SupplierName}' already exists.");
+
         var supplier = new Supplier
         {
             SupplierName = dto.SupplierName.Trim(),
@@ -59,6 +64,10 @@ public class SupplierService : ISupplierService
         if (string.IsNullOrWhiteSpace(dto.SupplierName))
             return ApiResponse<SupplierDto>.FailureResponse("Supplier name is required.");
 
+        var existingName = await _supplierRepository.GetByNameAsync(dto.SupplierName.Trim());
+        if (existingName is not null && existingName.SupplierId != id)
+            return ApiResponse<SupplierDto>.FailureResponse($"Supplier with name '{dto.SupplierName}' already exists.");
+
         existing.SupplierName = dto.SupplierName.Trim();
         existing.ContactNumber = dto.ContactNumber?.Trim();
         existing.Email = dto.Email?.Trim();
@@ -75,8 +84,19 @@ public class SupplierService : ISupplierService
         if (existing is null)
             return ApiResponse.FailureResponse($"Supplier with ID {id} not found.");
 
-        await _supplierRepository.DeleteAsync(id);
-        return ApiResponse.SuccessResponse("Supplier deleted successfully.");
+        try
+        {
+            await _supplierRepository.DeleteAsync(id);
+            return ApiResponse.SuccessResponse("Supplier deleted successfully.");
+        }
+        catch (DbUpdateException)
+        {
+            return ApiResponse.FailureResponse("Cannot delete supplier because it is currently assigned to one or more items.");
+        }
+        catch (Exception ex)
+        {
+            return ApiResponse.FailureResponse("An error occurred while deleting the supplier. Please try again.");
+        }
     }
 
     private static SupplierDto MapToDto(Supplier s) => new()

@@ -22,6 +22,9 @@ public class SupplierRepository : ISupplierRepository
     public async Task<Supplier?> GetByIdAsync(int id)
         => await _context.Suppliers.FindAsync(id);
 
+    public async Task<Supplier?> GetByNameAsync(string name)
+        => await _context.Suppliers.FirstOrDefaultAsync(s => s.SupplierName.ToLower() == name.ToLower());
+
     public async Task<int> CreateAsync(Supplier supplier)
     {
         _context.Suppliers.Add(supplier);
