@@ -22,6 +22,9 @@ public class CategoryRepository : ICategoryRepository
     public async Task<Category?> GetByIdAsync(int id)
         => await _context.Categories.FindAsync(id);
 
+    public async Task<Category?> GetByNameAsync(string name)
+        => await _context.Categories.FirstOrDefaultAsync(c => c.CategoryName.ToLower() == name.ToLower());
+
     public async Task<List<Category>> SearchAsync(string keyword)
         => await _context.Categories
             .Where(c => c.CategoryName.Contains(keyword) ||

@@ -3,6 +3,7 @@ using MiniInventory.Application.Interfaces.Repositories;
 using MiniInventory.Application.Interfaces.Services;
 using MiniInventory.Domain.Entities;
 using MiniInventory.Shared.CommonResponse;
+using Microsoft.EntityFrameworkCore;
 
 namespace MiniInventory.Application.Services;
 
@@ -45,6 +46,10 @@ public class CategoryService : ICategoryService
         if (string.IsNullOrWhiteSpace(dto.CategoryName))
             return ApiResponse<CategoryDto>.FailureResponse("Category name is required.", new List<string> { "CategoryName is required." });
 
+        var existingName = await _categoryRepository.GetByNameAsync(dto.CategoryName.Trim());
+        if (existingName is not null)
+            return ApiResponse<CategoryDto>.FailureResponse($"Category with name '{dto.CategoryName}' already exists.");
+
         var category = new Category
         {
             CategoryName = dto.CategoryName.Trim(),
@@ -67,6 +72,10 @@ public class CategoryService : ICategoryService
         if (string.IsNullOrWhiteSpace(dto.CategoryName))
             return ApiResponse<CategoryDto>.FailureResponse("Category name is required.");
 
+        var existingName = await _categoryRepository.GetByNameAsync(dto.CategoryName.Trim());
+        if (existingName is not null && existingName.CategoryId != id)
+            return ApiResponse<CategoryDto>.FailureResponse($"Category with name '{dto.CategoryName}' already exists.");
+
         existing.CategoryName = dto.CategoryName.Trim();
         existing.Description = dto.Description?.Trim();
         existing.IsActive = dto.IsActive;
@@ -81,8 +90,19 @@ public class CategoryService : ICategoryService
         if (existing is null)
             return ApiResponse.FailureResponse($"Category with ID {id} not found.");
 
-        await _categoryRepository.DeleteAsync(id);
-        return ApiResponse.SuccessResponse("Category deleted successfully.");
+        try
+        {
+            await _categoryRepository.DeleteAsync(id);
+            return ApiResponse.SuccessResponse("Category deleted successfully.");
+        }
+        catch (DbUpdateException)
+        {
+            return ApiResponse.FailureResponse("Cannot delete category because it is currently assigned to one or more items.");
+        }
+        catch (Exception ex)
+        {
+            return ApiResponse.FailureResponse("An error occurred while deleting the category. Please try again.");
+        }
     }
 
     private static CategoryDto MapToDto(Category c) => new()
