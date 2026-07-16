@@ -3,16 +3,24 @@ using MiniInventory.Application.Interfaces.Repositories;
 using MiniInventory.Application.Interfaces.Services;
 using MiniInventory.Domain.Entities;
 using MiniInventory.Shared.CommonResponse;
+using Microsoft.EntityFrameworkCore;
 
 namespace MiniInventory.Application.Services;
 
 public class ItemService : IItemService
 {
     private readonly IItemRepository _itemRepository;
+    private readonly IStockInRepository _stockInRepository;
+    private readonly IStockOutRepository _stockOutRepository;
 
-    public ItemService(IItemRepository itemRepository)
+    public ItemService(
+        IItemRepository itemRepository,
+        IStockInRepository stockInRepository,
+        IStockOutRepository stockOutRepository)
     {
         _itemRepository = itemRepository;
+        _stockInRepository = stockInRepository;
+        _stockOutRepository = stockOutRepository;
     }
 
     public async Task<ApiResponse<List<ItemDto>>> GetAllAsync()
@@ -94,8 +102,28 @@ public class ItemService : IItemService
         if (existing is null)
             return ApiResponse.FailureResponse($"Item with ID {id} not found.");
 
-        await _itemRepository.DeleteAsync(id);
-        return ApiResponse.SuccessResponse("Item deleted successfully.");
+        var totalIn = await _stockInRepository.GetTotalStockInForItemAsync(id);
+        var totalOut = await _stockOutRepository.GetTotalStockOutForItemAsync(id);
+        var currentBalance = totalIn - totalOut;
+
+        if (currentBalance > 0)
+        {
+            return ApiResponse.FailureResponse($"Cannot delete product '{existing.ItemName}' because it currently has {currentBalance} units in stock.");
+        }
+
+        try
+        {
+            await _itemRepository.DeleteAsync(id);
+            return ApiResponse.SuccessResponse("Item deleted successfully.");
+        }
+        catch (DbUpdateException)
+        {
+            return ApiResponse.FailureResponse("Cannot delete product because it has associated transaction records.");
+        }
+        catch (Exception ex)
+        {
+            return ApiResponse.FailureResponse("An error occurred while deleting the product.");
+        }
     }
 
     // ─── Private Helpers ───────────────────────────────────────────────────────
